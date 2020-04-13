@@ -1,0 +1,38 @@
+pragma solidity ^0.5.10;
+pragma experimental ABIEncoderV2;
+
+contract MyDemoContract{
+    
+    struct ContractInfo{
+         uint256 counter;
+         string  note;
+         string  contractLicenseId;
+    }
+   
+   ContractInfo private ContractInformation;
+    
+    event ContractInceremented(uint8 IncrementedValue, address IncrementedBy, string newNote);
+    
+    constructor(string memory initLicenseId, string memory initNote) public{
+        ContractInformation.counter = 0;
+        ContractInformation.note = initNote;
+        ContractInformation.contractLicenseId = initLicenseId;
+    }
+    
+    function setContractInformation(uint8 incrvalue, string memory _note) public{
+        require((keccak256(abi.encodePacked(_note)) != (keccak256(abi.encodePacked(ContractInformation.note)));
+        ContractInformation.counter += incrvalue;
+        ContractInformation.note = _note;
+        emit ContractInceremented(incrvalue, msg.sender, _note);
+    }
+    
+    function getcounter() public view returns(uint256 counterValue){
+        //return counter;
+        return ContractInformation.counter;
+    }
+    
+    function getContractInformation() public view returns(ContractInfo memory returnedContractInformation){
+       // return (counter,contractLicenseId);
+       return ContractInformation;
+    }
+}

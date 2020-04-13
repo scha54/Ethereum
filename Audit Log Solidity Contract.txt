@@ -1,0 +1,54 @@
+pragma solidity ^0.5.10;
+pragma experimental ABIEncoderV2;
+
+contract MyAuditLog{
+    address[] public WhiteList;
+    modifier onlyWhiteListed(address _to_be_checked_address){
+         uint i = 0;
+        for(i = 0;i < WhiteList.length; i++){
+            if(WhiteList[i] = _to_be_checked_address){
+                break;
+            }
+        }
+        if(i == WhiteList.length){
+            revert();
+        }
+        
+    }
+    
+    struct AuditLog{
+        string note;
+        uint256 timestamp;
+        uint256 incrementedValue;
+    }
+    
+    mapping(address => AuditLog[]) public storedAuditLogs;
+    constructor()public{
+        
+    }
+    
+    function addToWhiteList(address _allowedAddr) public{
+        uint i = 0;
+        for(i = 0;i < WhiteList.length; i++){
+            if(WhiteList[i] = _allowedAddr){
+                revert();
+            }
+        }
+        WhiteList.push(_allowedAddr);
+    }
+    
+    function addAuditLog(string memory _newNote, address _changedBy, uint256 _timestamp, uint256 _incrementedValue)
+    public onlyWhiteListed(msg.sender){
+        AuditLog memory _a;
+        _a.note = _newNote;
+        _a.incrementedValue = _incrementedValue;
+        _a.timestamp = _timestamp;
+        storedAuditLogs(_changedBy).push(_a);
+    }
+    
+    function getLogsBySender(address _sender)  
+    public view  returns (AuditLog[] memory logs) {
+      logs = storedAuditLogs;
+      AuditLog memory _b;
+      logs(_sender).pull(_b);
+    }
